@@ -1,11 +1,11 @@
 package crm;
 
-import ballerina.io;
+import ballerina/io;
 import ballerina/net.http;
 
 public struct CandyConfiguration {
     string token;
-    ClientEndpointConfiguration clientConfig;
+    http:ClientEndpointConfiguration clientConfig;
 }
 
 public function <CandyConfiguration candyConfig> CandyConfiguration() {
@@ -15,13 +15,13 @@ public function <CandyConfiguration candyConfig> CandyConfiguration() {
 public struct CandyCRMEndpoint {
     http:ClientEndpoint httpClient;
     CandyConfiguration candyConfig;
-    ConnectorCandyCRM candyConnector;
+    CandyCRMConnector candyConnector;
 }
 
 public function <CandyCRMEndpoint ep> init (CandyConfiguration candyConfig) {
     ep.httpClient = {};
     ep.httpClient.config = candyConfig.clientConfig;
-    candyConnector.token = candyConfig.token;
+    ep.candyConnector.token = candyConfig.token;
 }
 
 public function <CandyCRMEndpoint ep> register(typedesc serviceType) {
@@ -34,7 +34,7 @@ public function <CandyCRMEndpoint ep> start() {
 
 @Description { value:"Returns the connector that client code uses"}
 @Return { value:"The connector that client code uses" }
-public function <CandyCRMEndpoint ep> getClient() returns ConnectorCandyCRM {
+public function <CandyCRMEndpoint ep> getClient() returns CandyCRMConnector {
     return ep.candyConnector;
 }
 
