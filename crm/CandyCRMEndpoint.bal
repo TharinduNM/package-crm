@@ -6,6 +6,7 @@ import ballerina/net.http;
 public struct CandyConfiguration {
     string token;
     http:ClientEndpointConfiguration clientConfig;
+    string uri;
 }
 
 public function <CandyConfiguration candyConfig> CandyConfiguration() {
@@ -13,15 +14,15 @@ public function <CandyConfiguration candyConfig> CandyConfiguration() {
 }
 
 public struct CandyCRMEndpoint {
-    http:ClientEndpoint httpClient;
     CandyConfiguration candyConfig;
     CandyCRMConnector candyConnector;
 }
 
 public function <CandyCRMEndpoint ep> init (CandyConfiguration candyConfig) {
-    ep.httpClient = {};
-    ep.httpClient.config = candyConfig.clientConfig;
-    ep.candyConnector.token = candyConfig.token;
+    ep.candyConnector = { token:candyConfig.token,
+                            httpClient: http:createHttpClient(candyConfig.uri, candyConfig.clientConfig) };
+    httpClientGlobal = http:createHttpClient(candyConfig.uri, candyConfig.clientConfig);
+    //ep.candyConnector.token = candyConfig.token;
 }
 
 public function <CandyCRMEndpoint ep> register(typedesc serviceType) {
